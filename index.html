@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SnowYield — Dividend DRIP Snowball Calculator | Free Dividend Reinvestment Calculator</title>
+<meta name="description" content="Free dividend reinvestment calculator: model 30-year DRIP compounding, compare DRIP vs cash payouts, chart yield-on-cost, stress-test dividend cuts, and compare conservative/base/aggressive scenarios.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --pine:#0C231A; --gold:#D4AF37; --mint:#34D399; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--pine); color:#F3EFE3; font-family:'Inter',system-ui,sans-serif; }
+  .font-display { font-family:'Playfair Display',serif; }
+  .gold-text { background:linear-gradient(115deg,#F6E27A 0%,#D4AF37 40%,#F9EDB8 60%,#B8860B 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .vault-card { background:linear-gradient(160deg,#10301F 0%,#0B2118 100%); border:1px solid rgba(212,175,55,.28); border-radius:1rem; box-shadow:0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(212,175,55,.12); }
+  .vault-card-glow { box-shadow:0 0 0 1px rgba(212,175,55,.35), 0 14px 40px rgba(212,175,55,.10); }
+  .gold-border { border:1px solid rgba(212,175,55,.45); }
+  .btn-gold { background:linear-gradient(135deg,#E8C84A,#D4AF37 55%,#A8842A); color:#1A1405; font-weight:700; border-radius:.75rem; box-shadow:0 6px 18px rgba(212,175,55,.35), inset 0 1px 0 rgba(255,255,255,.5); transition:transform .12s ease, box-shadow .12s ease; }
+  .btn-gold:hover { transform:translateY(-1px); box-shadow:0 10px 24px rgba(212,175,55,.45), inset 0 1px 0 rgba(255,255,255,.5); }
+  .btn-mint { background:linear-gradient(135deg,#5EEAD4,#34D399 60%,#10B981); color:#06231A; font-weight:700; border-radius:.75rem; box-shadow:0 6px 18px rgba(52,211,153,.30); transition:transform .12s ease; }
+  .btn-mint:hover { transform:translateY(-1px); }
+  .btn-ghost { border:1px solid rgba(212,175,55,.5); color:#F3EFE3; border-radius:.75rem; font-weight:600; transition:background .12s ease; }
+  .btn-ghost:hover { background:rgba(212,175,55,.12); }
+  .field { background:#08170F; border:1px solid rgba(212,175,55,.30); color:#F3EFE3; border-radius:.6rem; padding:.55rem .7rem; width:100%; font-weight:600; }
+  .field:focus { outline:none; border-color:#D4AF37; box-shadow:0 0 0 3px rgba(212,175,55,.18); }
+  label.lbl { font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:#C9BFA6; font-weight:600; }
+  .tab-btn { border:1px solid rgba(212,175,55,.35); border-radius:.7rem; padding:.55rem .4rem; font-size:.8rem; font-weight:700; color:#D9CFB2; background:rgba(212,175,55,.05); transition:all .15s ease; }
+  .tab-btn.active { background:linear-gradient(135deg,#E8C84A,#B8860B); color:#1A1405; border-color:transparent; box-shadow:0 6px 16px rgba(212,175,55,.35); }
+  .coin-stack { display:flex; align-items:flex-end; gap:2px; height:26px; }
+  .coin { width:9px; height:9px; border-radius:9999px; background:radial-gradient(circle at 35% 30%, #F9EDB8, #D4AF37 60%, #8a6d1f); box-shadow:0 1px 2px rgba(0,0,0,.5); flex-shrink:0; }
+  .coin.mint { background:radial-gradient(circle at 35% 30%, #A7F3D0, #34D399 60%, #0E7C5B); }
+  .stat-num { font-family:'Playfair Display',serif; }
+  .faq-item { border-bottom:1px solid rgba(212,175,55,.18); }
+  .article h2 { font-family:'Playfair Display',serif; color:#E8C84A; font-size:1.5rem; font-weight:700; margin:2rem 0 .75rem; }
+  .article h3 { color:#F3EFE3; font-size:1.1rem; font-weight:700; margin:1.4rem 0 .5rem; }
+  .article p, .article li { color:#D9D2BC; line-height:1.8; margin-bottom:.9rem; }
+  .article ul { list-style:disc; padding-left:1.4rem; }
+  .article strong { color:#F3EFE3; }
+  .vault-lines { background-image:radial-gradient(rgba(212,175,55,.10) 1px, transparent 1px); background-size:26px 26px; }
+  .no-print { }
+  @media print { .no-print { display:none !important; } }
+  input[type=range] { accent-color:#D4AF37; }
+  .scroll-thin::-webkit-scrollbar { height:8px; width:8px; }
+  .scroll-thin::-webkit-scrollbar-thumb { background:rgba(212,175,55,.4); border-radius:8px; }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "SnowYield Dividend DRIP Snowball Calculator",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "Free dividend reinvestment calculator: project DRIP compounding over decades, compare DRIP vs cash payouts, chart yield on cost, stress-test dividend cuts, and compare scenarios."
+}
+</script>
+</head>
+<body id="top" class="vault-lines min-h-screen">
+
+<!-- STICKY HEADER -->
+<header class="sticky top-0 z-50" style="background:rgba(8,23,15,.92);backdrop-filter:blur(10px);border-bottom:1px solid rgba(212,175,55,.35)">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+    <a href="#top" class="flex items-center gap-2.5">
+      <svg width="34" height="34" viewBox="0 0 40 40" aria-hidden="true">
+        <ellipse cx="20" cy="30" rx="12" ry="5" fill="#8a6d1f"/>
+        <ellipse cx="20" cy="26" rx="12" ry="5" fill="#B8860B"/>
+        <ellipse cx="20" cy="22" rx="12" ry="5" fill="#D4AF37"/>
+        <ellipse cx="20" cy="18" rx="12" ry="5" fill="#E8C84A"/>
+        <ellipse cx="20" cy="14" rx="12" ry="5" fill="#F6E27A"/>
+        <text x="20" y="17.5" text-anchor="middle" font-size="9" font-weight="bold" fill="#5c4a12" font-family="Georgia,serif">$</text>
+      </svg>
+      <span class="font-display text-2xl font-bold gold-text">SnowYield</span>
+    </a>
+    <nav class="flex items-center gap-2 sm:gap-3 text-sm font-semibold">
+      <a href="#top" class="px-3 py-1.5 rounded-lg hover:bg-yellow-500/10 text-yellow-100/90">Home</a>
+      <a href="https://fixoraa.tech" class="px-3 py-1.5 rounded-lg btn-ghost text-xs sm:text-sm">More Tools</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="max-w-6xl mx-auto px-4 sm:px-6 pt-10 pb-6 text-center">
+  <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase" style="background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.5);color:#6EE7B7">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+    Unlimited Free Usage &middot; No Signup &middot; No Paywall
+  </span>
+  <h1 class="font-display text-4xl sm:text-5xl md:text-6xl font-extrabold mt-5 leading-tight">Dividend <span class="gold-text">DRIP Snowball</span><br>Calculator</h1>
+  <p class="max-w-2xl mx-auto mt-4 text-base sm:text-lg" style="color:#C9BFA6">Watch your dividends compound year after year. This free <strong class="text-yellow-100">dividend reinvestment calculator</strong> projects your DRIP snowball over decades, races DRIP against cash payouts, charts your yield on cost, and stress-tests dividend cuts.</p>
+  <div class="flex flex-wrap justify-center gap-3 mt-6">
+    <a href="#tool" class="btn-gold px-6 py-3 text-sm sm:text-base">Start Calculating</a>
+    <a href="#how-it-works" class="btn-ghost px-6 py-3 text-sm sm:text-base">How It Works</a>
+  </div>
+</section>
+
+<!-- TOP AD (verbatim) -->
+<div class="no-print mx-auto max-w-6xl px-4 sm:px-6 pt-4" role="complementary" aria-label="Advertisement">
+  <div class="mx-auto text-center" style="max-width:728px">
+    <span class="block text-[10px] tracking-[0.18em] uppercase text-slate-400 mb-1.5">Advertisement</span>
+    <div class="flex justify-center overflow-hidden">
+      <div class="origin-top scale-[0.44] sm:scale-100 shrink-0">
+        <script>
+          atOptions = { 'key' : '4e68ac77881c17fe128a46565d9a4e8c', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
+        </script>
+        <script src="https://www.highrevenueformat.com/4e68ac77881c17fe128a46565d9a4e8c/invoke.js"></script>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= TOOL ================= -->
+<main id="tool" class="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+
+  <div class="grid lg:grid-cols-[340px_1fr] gap-5">
+    <!-- INPUT VAULT -->
+    <section class="vault-card vault-card-glow p-5 sm:p-6 h-fit lg:sticky lg:top-20" aria-label="Calculator inputs">
+      <h2 class="font-display text-2xl font-bold gold-text mb-1">Your Vault Settings</h2>
+      <p class="text-xs mb-5" style="color:#8f8668">Tune the assumptions. Everything recalculates instantly.</p>
+      <div class="space-y-4">
+        <div>
+          <label class="lbl" for="in-initial">Initial investment ($)</label>
+          <input id="in-initial" class="field mt-1" type="number" min="0" step="100" value="10000">
+        </div>
+        <div>
+          <label class="lbl" for="in-contrib">Annual contribution ($)</label>
+          <input id="in-contrib" class="field mt-1" type="number" min="0" step="100" value="5000">
+        </div>
+        <div>
+          <label class="lbl" for="in-yield">Starting dividend yield (%)</label>
+          <input id="in-yield" class="field mt-1" type="number" min="0" max="30" step="0.1" value="4">
+        </div>
+        <div>
+          <label class="lbl" for="in-growth">Share price growth (% / yr)</label>
+          <input id="in-growth" class="field mt-1" type="number" min="-50" max="50" step="0.5" value="7">
+        </div>
+        <div>
+          <label class="lbl" for="in-divgrowth">Dividend growth (% / yr)</label>
+          <input id="in-divgrowth" class="field mt-1" type="number" min="-50" max="50" step="0.5" value="6">
+        </div>
+        <div>
+          <div class="flex justify-between items-baseline">
+            <label class="lbl" for="in-years">Time horizon</label>
+            <span id="years-label" class="text-sm font-bold" style="color:#E8C84A">30 years</span>
+          </div>
+          <input id="in-years" type="range" min="1" max="50" step="1" value="30" class="w-full mt-2">
+        </div>
+        <p id="input-error" class="hidden text-sm font-semibold rounded-lg px-3 py-2" style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.5);color:#FCA5A5"></p>
+        <button id="btn-calc" class="btn-gold w-full py-3 text-base">Calculate Snowball</button>
+        <div class="flex gap-2">
+          <button id="btn-csv" class="btn-ghost flex-1 py-2 text-xs">Download CSV</button>
+          <button id="btn-copy" class="btn-ghost flex-1 py-2 text-xs">Copy Summary</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section aria-label="Results">
+      <div class="grid grid-cols-2 xl:grid-cols-4 gap-3 mb-5">
+        <div class="vault-card p-4 text-center">
+          <p class="lbl">DRIP final value</p>
+          <p id="stat-drip" class="stat-num text-2xl sm:text-3xl font-bold gold-text mt-1">$0</p>
+          <p class="text-[11px] mt-1" style="color:#8f8668">dividends reinvested</p>
+        </div>
+        <div class="vault-card p-4 text-center">
+          <p class="lbl">Cash payout value</p>
+          <p id="stat-cash" class="stat-num text-2xl sm:text-3xl font-bold mt-1" style="color:#6EE7B7">$0</p>
+          <p class="text-[11px] mt-1" style="color:#8f8668">dividends taken as cash</p>
+        </div>
+        <div class="vault-card p-4 text-center">
+          <p class="lbl">DRIP edge</p>
+          <p id="stat-edge" class="stat-num text-2xl sm:text-3xl font-bold mt-1" style="color:#F3EFE3">+$0</p>
+          <p id="stat-edge-pct" class="text-[11px] mt-1" style="color:#8f8668">+0%</p>
+        </div>
+        <div class="vault-card p-4 text-center">
+          <p class="lbl">Final yield on cost</p>
+          <p id="stat-yoc" class="stat-num text-2xl sm:text-3xl font-bold mt-1" style="color:#F3EFE3">0%</p>
+          <p class="text-[11px] mt-1" style="color:#8f8668">annual income / first dollar in</p>
+        </div>
+      </div>
+
+      <!-- FEATURE TABS -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4 no-print">
+        <button class="tab-btn active" data-tab="race">DRIP vs Cash Race</button>
+        <button class="tab-btn" data-tab="yoc">Yield-on-Cost Curve</button>
+        <button class="tab-btn" data-tab="stress">Dividend-Cut Stress</button>
+        <button class="tab-btn" data-tab="scen">3-Way Scenarios</button>
+      </div>
+
+      <!-- FEATURE 1: RACE -->
+      <div id="tab-race" class="vault-card p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+          <div>
+            <h3 class="font-display text-xl font-bold gold-text">The 30-Year Race: DRIP vs Cash</h3>
+            <p class="text-xs mt-1" style="color:#8f8668">Gold = DRIP compounding. Mint = dividends paid out as cash. Press play to watch them grow year by year.</p>
+          </div>
+          <button id="btn-race" class="btn-gold px-5 py-2.5 text-sm">▶ Play Race</button>
+        </div>
+        <div class="relative">
+          <canvas id="chart-race" class="w-full" style="height:320px" aria-label="Animated chart comparing DRIP balance versus cash-payout balance over time"></canvas>
+        </div>
+        <div class="flex items-center gap-6 mt-3 text-xs font-semibold">
+          <span class="flex items-center gap-2"><span class="inline-block w-3.5 h-3.5 rounded-full" style="background:#D4AF37"></span> DRIP (reinvested)</span>
+          <span class="flex items-center gap-2"><span class="inline-block w-3.5 h-3.5 rounded-full" style="background:#34D399"></span> Cash payout</span>
+        </div>
+        <p id="race-note" class="text-sm mt-3 leading-relaxed" style="color:#D9D2BC"></p>
+      </div>
+
+      <!-- FEATURE 2: YIELD ON COST -->
+      <div id="tab-yoc" class="vault-card p-5 sm:p-6 hidden">
+        <h3 class="font-display text-xl font-bold gold-text">Yield-on-Cost Curve</h3>
+        <p class="text-xs mt-1 mb-3" style="color:#8f8668">Your effective yield on the <em>original</em> investment, each year. This is the number dividend investors brag about — watch it climb as dividends grow.</p>
+        <canvas id="chart-yoc" class="w-full" style="height:300px" aria-label="Chart of yield on original investment over time"></canvas>
+        <p id="yoc-note" class="text-sm mt-3 leading-relaxed" style="color:#D9D2BC"></p>
+      </div>
+
+      <!-- FEATURE 3: STRESS TEST -->
+      <div id="tab-stress" class="vault-card p-5 sm:p-6 hidden">
+        <h3 class="font-display text-xl font-bold gold-text">Dividend-Cut Stress Test</h3>
+        <p class="text-xs mt-1 mb-4" style="color:#8f8668">Companies cut dividends in recessions. Simulate a cut and see how long your income takes to recover.</p>
+        <div class="grid sm:grid-cols-3 gap-3 mb-4">
+          <div>
+            <label class="lbl" for="st-cut">Dividend cut (%)</label>
+            <input id="st-cut" class="field mt-1" type="number" min="0" max="100" step="5" value="50">
+          </div>
+          <div>
+            <label class="lbl" for="st-year">Cut happens in year</label>
+            <input id="st-year" class="field mt-1" type="number" min="1" max="50" step="1" value="5">
+          </div>
+          <div class="flex items-end">
+            <button id="btn-stress" class="btn-gold w-full py-2.5 text-sm">Run Stress Test</button>
+          </div>
+        </div>
+        <canvas id="chart-stress" class="w-full" style="height:280px" aria-label="Chart showing dividend income with and without the cut"></canvas>
+        <div class="grid sm:grid-cols-3 gap-3 mt-4">
+          <div class="rounded-xl p-4 text-center" style="background:#08170F;border:1px solid rgba(239,68,68,.4)">
+            <p class="lbl">Income lost</p>
+            <p id="stress-lost" class="stat-num text-2xl font-bold mt-1" style="color:#FCA5A5">$0</p>
+          </div>
+          <div class="rounded-xl p-4 text-center" style="background:#08170F;border:1px solid rgba(212,175,55,.4)">
+            <p class="lbl">Recovery timeline</p>
+            <p id="stress-recover" class="stat-num text-2xl font-bold mt-1 gold-text">—</p>
+          </div>
+          <div class="rounded-xl p-4 text-center" style="background:#08170F;border:1px solid rgba(52,211,153,.4)">
+            <p class="lbl">Income the year after cut</p>
+            <p id="stress-after" class="stat-num text-2xl font-bold mt-1" style="color:#6EE7B7">$0</p>
+          </div>
+        </div>
+        <p id="stress-note" class="text-sm mt-3 leading-relaxed" style="color:#D9D2BC"></p>
+      </div>
+
+      <!-- FEATURE 4: SCENARIOS -->
+      <div id="tab-scen" class="vault-card p-5 sm:p-6 hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 class="font-display text-xl font-bold gold-text">3-Way Scenario Compare</h3>
+            <p class="text-xs mt-1" style="color:#8f8668">Tweak each scenario, compare side by side, and save your presets in this browser.</p>
+          </div>
+          <div class="flex gap-2">
+            <button id="btn-save-presets" class="btn-mint px-4 py-2 text-xs">Save Presets</button>
+            <button id="btn-load-presets" class="btn-ghost px-4 py-2 text-xs">Load Saved</button>
+          </div>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-3 mb-4" id="scen-editors"></div>
+        <button id="btn-compare" class="btn-gold w-full py-3 text-sm mb-4">Compare Scenarios</button>
+        <canvas id="chart-scen" class="w-full" style="height:300px" aria-label="Chart comparing the three scenarios over time"></canvas>
+        <div class="overflow-x-auto scroll-thin mt-4">
+          <table class="w-full text-sm" id="scen-table">
+            <thead>
+              <tr class="text-left" style="color:#8f8668">
+                <th class="py-2 pr-4 font-semibold text-xs uppercase tracking-wider">Scenario</th>
+                <th class="py-2 pr-4 font-semibold text-xs uppercase tracking-wider text-right">Final value</th>
+                <th class="py-2 pr-4 font-semibold text-xs uppercase tracking-wider text-right">Final annual income</th>
+                <th class="py-2 font-semibold text-xs uppercase tracking-wider text-right">Yield on cost</th>
+              </tr>
+            </thead>
+            <tbody id="scen-tbody"></tbody>
+          </table>
+        </div>
+        <p id="scen-msg" class="text-xs mt-2 font-semibold" style="color:#6EE7B7"></p>
+      </div>
+
+      <!-- YEARLY LEDGER -->
+      <div class="vault-card p-5 sm:p-6 mt-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+          <h3 class="font-display text-xl font-bold gold-text">Year-by-Year Ledger</h3>
+          <button id="btn-ledger" class="btn-ghost px-4 py-2 text-xs">Show full table</button>
+        </div>
+        <div class="overflow-x-auto scroll-thin">
+          <table class="w-full text-sm min-w-[640px]">
+            <thead>
+              <tr class="text-left" style="color:#8f8668">
+                <th class="py-2 pr-3 font-semibold text-xs uppercase tracking-wider">Yr</th>
+                <th class="py-2 pr-3 font-semibold text-xs uppercase tracking-wider text-right">Share price</th>
+                <th class="py-2 pr-3 font-semibold text-xs uppercase tracking-wider text-right">Shares</th>
+                <th class="py-2 pr-3 font-semibold text-xs uppercase tracking-wider text-right">Dividends</th>
+                <th class="py-2 pr-3 font-semibold text-xs uppercase tracking-wider text-right">DRIP value</th>
+                <th class="py-2 pr-3 font-semibold text-xs uppercase tracking-wider text-right">Cash value</th>
+                <th class="py-2 font-semibold text-xs uppercase tracking-wider">Growth coins</th>
+              </tr>
+            </thead>
+            <tbody id="ledger-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- BOTTOM AD (verbatim) -->
+<div class="no-print mx-auto max-w-6xl px-4 sm:px-6 pb-4" role="complementary" aria-label="Advertisement">
+  <div class="mx-auto text-center" style="max-width:728px">
+    <span class="block text-[10px] tracking-[0.18em] uppercase text-slate-400 mb-1.5">Advertisement</span>
+    <div class="flex justify-center overflow-hidden">
+      <script async src="https://js.wpadmngr.com/static/adManager.js" data-admpid="464498"></script>
+    </div>
+  </div>
+</div>
+
+<!-- ================= SEO ARTICLE ================= -->
+<article id="seo-article" class="article max-w-4xl mx-auto px-4 sm:px-6 py-10">
+  <h2>Dividend Reinvestment Calculator: Watch Your Snowball Compound</h2>
+  <p>Every dividend investor has heard the advice: reinvest your dividends and let compounding do the heavy lifting. But advice is cheap and numbers are convincing. A <strong>dividend reinvestment calculator</strong> turns the vague promise of "compounding" into a concrete projection — how many shares you will own in year 10, how much income those shares will throw off in year 20, and how much richer the reinvesting investor ends up compared to the one who spends every payout. SnowYield's free <strong>drip calculator</strong> does exactly that, and it does it without asking for your email, your money, or your patience.</p>
+  <p>The idea behind a Dividend Reinvestment Plan, universally known as DRIP, is disarmingly simple. When a company pays you a dividend, you use that cash to buy more shares of the same company — often automatically, sometimes with zero commission and occasionally even at a small discount to the market price. Those new shares then earn their own dividends next quarter, which buy yet more shares. The snowball rolls downhill and gets bigger with every rotation. Albert Einstein reportedly called compound interest the eighth wonder of the world, and the DRIP is compound interest wearing a dividend investor's work boots.</p>
+
+  <h2>How the Dividend Snowball Math Actually Works</h2>
+  <p>Most <strong>dividend snowball calculator</strong> tools hide their math. Ours does not, because understanding the engine makes you a better investor. Each year in the model follows the same five steps. First, your annual contribution buys new shares at the year's starting share price. Second, every share you own — old and newly bought — earns that year's dividend per share, which has grown at your assumed dividend growth rate. Third, if you are on the DRIP path, the total dividend cash is immediately converted into new shares at the year's ending share price. Fourth, the share price itself appreciates at your assumed growth rate. Fifth, the cycle repeats with a larger share count.</p>
+  <p>Notice the triple engine at work: your share count grows from reinvestment, the dividend per share grows from dividend growth, and the share price grows from capital appreciation. Annual dividend income equals shares multiplied by dividend per share, so it benefits from two compounding forces at once. That is why the income curve on a good DRIP bends upward so aggressively in the later years — the growth is not linear, it is exponential on two axes simultaneously. A <strong>drip calculator</strong> that only models price appreciation, or only models dividend growth, misses the entire point of the strategy.</p>
+  <p>A concrete example makes it vivid. Invest $10,000 in a stock yielding 4%, with the share price rising 7% a year and the dividend rising 6% a year, and add $5,000 every year. After 30 years the DRIP path is worth roughly five times the cash-payout path's portfolio value, and the annual dividend income alone can exceed the original $10,000 investment. Those are not magic numbers — they are what happens when three compounding rates multiply for three decades. Change the horizon to 10 years and the advantage looks modest; the snowball needs time to become an avalanche, which is exactly why starting early matters more than picking perfectly.</p>
+
+  <h2>DRIP vs Cash Payouts: The Animated Race</h2>
+  <p>One of the most argued questions in dividend investing is whether to reinvest dividends or take the cash. The honest answer is that it depends on your stage of life — a retiree living off portfolio income has every reason to take the cash, while an accumulator decades from retirement almost always wins by reinvesting. Our animated race chart settles the argument visually for your specific numbers. The gold line is the DRIP balance; the mint line is the cash-payout balance plus every dollar of dividends ever received. Press play and watch the two lines separate.</p>
+  <p>What surprises most people is <em>when</em> the separation happens. In the first few years the lines barely diverge, because dividends are small relative to the portfolio. Somewhere around year 7 to 12, depending on your yield and growth assumptions, the DRIP line pulls away decisively and the gap widens every year after. This is the visual signature of compounding: boring at first, then suddenly not. If you have ever wondered why experienced investors seem almost religious about reinvestment, the race chart is the reason in one picture.</p>
+  <p>There is a subtlety worth noting. The cash-payout line in our chart counts both the portfolio value and the cumulative cash received, so it is a fair fight — we are not pretending spent dividends vanish. The DRIP still wins over long horizons because reinvested dividends buy shares that appreciate and pay future dividends, while spent cash earns nothing. The calculator also reports the "DRIP edge" in dollars and percent, so you can see exactly what reinvestment discipline is worth to you.</p>
+
+  <h2>Yield on Cost: The Number Dividend Investors Brag About</h2>
+  <p>Yield on cost is the most satisfying metric in dividend investing. It answers a simple question: how much income am I earning this year, divided by the money I originally put in? If you invested $10,000 and now receive $1,200 a year in dividends, your yield on cost is 12% — even if the stock's current yield is only 3%. The current yield measures what a new buyer gets; yield on cost measures what <em>you</em> get for having bought early and held on.</p>
+  <p>Our yield-on-cost curve charts this number for every year of your projection. With dividend growth of 6% a year, yield on cost roughly doubles every 12 years, because the rule of 72 applies to growing income streams too. A 4% starting yield becomes an 8% yield on cost in about 12 years, 16% in about 24 years, and keeps climbing. This curve is the best answer to anyone who says "4% yield is too low to bother with" — the starting yield is just the seed; the yield on cost is the harvest.</p>
+  <p>Dividend growth is the hidden variable that makes or breaks the curve. A stock yielding 6% with zero dividend growth produces a flat yield-on-cost line — fine, but no snowball. A stock yielding 3% with 10% annual dividend growth starts lower but its curve bends upward and eventually overtakes the high-yielder's income. This is why dividend growth investors obsess over payout growth streaks rather than headline yield, and why our calculator lets you set the two rates independently instead of smuggling in one fixed assumption.</p>
+
+  <h2>Stress-Testing Dividend Cuts</h2>
+  <p>Real dividend investing is not a smooth spreadsheet. Companies cut dividends in recessions, during industry disruption, or after bad management decisions — and cuts hurt twice, because the income drops and fewer new shares get bought through the DRIP. Our dividend-cut stress test lets you simulate reality: pick a cut size and the year it happens, and the calculator replays your entire projection with the reduced dividend from that year onward.</p>
+  <p>Three numbers tell the story. First, the total income lost to the cut across the remaining horizon — the true cost, which is always larger than the single-year drop because every lost dollar would have compounded. Second, the recovery timeline: how many years until your annual dividend income climbs back to its pre-cut level, powered by dividend growth resuming from the lower base. Third, a chart showing your income with and without the cut, so you can see the scar and the healing in one glance.</p>
+  <p>Play with the stress test and you will discover something reassuring: moderate cuts early in a long horizon are surprisingly survivable. A 30% cut in year 5 of a 30-year plan, with 6% dividend growth resuming afterward, typically recovers within a handful of years — because ongoing contributions and reinvestment keep adding shares even while the dividend per share is depressed. Cuts late in the horizon, when the portfolio is large and contributions are small relative to it, leave deeper scars. The lesson is not to fear cuts but to understand which cuts actually endanger your plan, and to favor companies with the balance sheets to avoid them.</p>
+
+  <h2>Comparing Scenarios: Conservative, Base, Aggressive</h2>
+  <p>No projection survives contact with the future, so serious planning means bracketing the future instead of predicting it. The three-scenario comparison runs your plan under conservative, base, and aggressive assumptions side by side — same contributions, different yields and growth rates. The conservative column is your "sleep well at night" number; the aggressive column is your "if everything goes right" number; the base column is the one to plan around.</p>
+  <p>The spread between scenarios teaches humility fast. Small differences in assumed growth rates compound into enormous differences over 30 years — a 2% difference in annual dividend growth can more than double the final income. That is not a flaw in the calculator; it is the central truth of long-horizon investing. Use the scenarios to find plans that work even in the conservative case, rather than plans that only work if you are lucky. You can edit every assumption in each scenario and save your presets in the browser, so your personal planning numbers are one click away next visit.</p>
+
+  <h2>How to Use This Dividend Reinvestment Calculator</h2>
+  <p>Start with the vault settings on the left. Enter your initial investment and the amount you plan to add each year — be honest rather than optimistic, because the calculator rewards consistency more than heroics. Set the starting dividend yield to the actual yield of the stocks or funds you own, or a realistic market average around 2 to 4% for broad funds and 3 to 5% for dividend-focused ones. For share price growth, long-run stock market history suggests 7 to 10% nominal; for dividend growth, quality dividend growers have historically raised payouts 5 to 8% a year. Choose a horizon that matches your real timeline — 20 to 40 years for retirement planning.</p>
+  <p>Then explore the four panels. Watch the DRIP vs cash race to internalize why reinvestment matters. Study the yield-on-cost curve to see what your patience buys. Run a stress test with a cut size that matches the worst recession you remember. Finally, build your three scenarios and save them. The year-by-year ledger at the bottom shows every number behind the charts, and you can download it as a CSV to keep your own records or share with a financial advisor.</p>
+
+  <h2>Common Mistakes This Calculator Helps You Avoid</h2>
+  <ul>
+    <li><strong>Ignoring dividend growth:</strong> investors fixate on starting yield and forget that a growing 3% beats a stagnant 6% within a decade. Model both rates explicitly.</li>
+    <li><strong>Underestimating time:</strong> running the numbers for 10 years instead of 30 makes DRIP look pointless. The snowball needs decades; check what happens when you extend the horizon by ten years.</li>
+    <li><strong>Assuming smooth returns:</strong> real markets crash and dividends get cut. Use the stress test instead of assuming a straight line up.</li>
+    <li><strong>Forgetting contributions matter most early:</strong> in the first decade, your annual contributions usually add more shares than reinvested dividends do. The DRIP takes over later — both matter, at different times.</li>
+    <li><strong>Confusing yield with total return:</strong> a high yield with a falling share price is a trap, not a bargain. The calculator shows portfolio value, not just income, for exactly this reason.</li>
+  </ul>
+
+  <h2>A Note on Taxes and Real-World Friction</h2>
+  <p>This <strong>dividend reinvestment calculator</strong> models pre-tax compounding, which matches how DRIPs behave inside tax-advantaged retirement accounts. In taxable accounts, dividends are typically taxed in the year they are paid — even when reinvested — which drags on the snowball. Tax rules vary by country and change often, so treat the projections as a clean mathematical baseline and discuss the tax layer with a qualified professional. The calculator also assumes fractional shares, instant reinvestment, and no fees; real DRIPs come very close to this ideal, which is part of their charm.</p>
+  <p>The bottom line is simple: dividends reinvested are shares bought with money you never had to earn twice. Run your numbers, stress-test your assumptions, and give the snowball the one thing it needs most — time. SnowYield is free forever, with no signup and no paywall, because the math of compounding belongs to everyone.</p>
+</article>
+
+<!-- ================= FAQS ================= -->
+<section class="max-w-4xl mx-auto px-4 sm:px-6 pb-12" aria-label="Frequently asked questions">
+  <h2 class="font-display text-3xl font-bold gold-text mb-6 text-center">Frequently Asked Questions</h2>
+  <div class="vault-card px-5 sm:px-8 py-2">
+    <div class="faq-item py-4">
+      <h3 class="font-bold text-base sm:text-lg text-yellow-50">What is a dividend reinvestment calculator?</h3>
+      <p class="text-sm mt-2 leading-relaxed" style="color:#D9D2BC">A dividend reinvestment calculator projects how your investment grows when dividends are automatically used to buy more shares instead of being paid out as cash. You enter your starting investment, contributions, dividend yield, share price growth, and dividend growth, and the calculator shows your future portfolio value, share count, and dividend income year by year.</p>
+    </div>
+    <div class="faq-item py-4">
+      <h3 class="font-bold text-base sm:text-lg text-yellow-50">How does DRIP compounding actually work?</h3>
+      <p class="text-sm mt-2 leading-relaxed" style="color:#D9D2BC">DRIP compounding has three engines running at once: reinvested dividends buy more shares, the dividend per share grows over time, and the share price appreciates. Your annual income equals shares times dividend per share, so it benefits from two compounding forces simultaneously — which is why the income curve bends upward so steeply in later years.</p>
+    </div>
+    <div class="faq-item py-4">
+      <h3 class="font-bold text-base sm:text-lg text-yellow-50">What is yield on cost, and why does it matter?</h3>
+      <p class="text-sm mt-2 leading-relaxed" style="color:#D9D2BC">Yield on cost is your annual dividend income divided by your original investment. If you invested $10,000 and now collect $1,200 a year in dividends, your yield on cost is 12% — even if new buyers only get 3%. It measures what your patience and early buying earned you, and with steady dividend growth it roughly doubles every 12 years.</p>
+    </div>
+    <div class="faq-item py-4">
+      <h3 class="font-bold text-base sm:text-lg text-yellow-50">Is DRIP better than taking cash dividends?</h3>
+      <p class="text-sm mt-2 leading-relaxed" style="color:#D9D2BC">For long-term wealth building, usually yes — reinvested dividends buy shares that appreciate and pay future dividends, while spent cash earns nothing. Over a 30-year horizon the DRIP investor typically ends up far ahead. But if you are retired and living off portfolio income, taking the cash is the right choice. It depends on your stage of life, not on the math alone.</p>
+    </div>
+    <div class="faq-item py-4">
+      <h3 class="font-bold text-base sm:text-lg text-yellow-50">What happens to my DRIP if a company cuts its dividend?</h3>
+      <p class="text-sm mt-2 leading-relaxed" style="color:#D9D2BC">A cut reduces your income and slows the snowball, because fewer new shares are bought. But the damage is often temporary: with dividend growth resuming from the lower base, income typically recovers within a few years — especially early in a long plan when contributions keep adding shares. Use the stress-test panel above to simulate any cut size and see the recovery timeline for your own numbers.</p>
+    </div>
+    <div class="faq-item py-4" style="border-bottom:none">
+      <h3 class="font-bold text-base sm:text-lg text-yellow-50">Are dividends from a DRIP taxable?</h3>
+      <p class="text-sm mt-2 leading-relaxed" style="color:#D9D2BC">In most countries, yes — dividends are generally taxable in the year they are paid even when automatically reinvested, unless the investment sits in a tax-advantaged retirement account. Tax rules vary by country and change frequently, so treat this calculator's projections as pre-tax and consult a qualified tax professional for your situation.</p>
+    </div>
+  </div>
+</section>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "What is a dividend reinvestment calculator?", "acceptedAnswer": { "@type": "Answer", "text": "A dividend reinvestment calculator projects how your investment grows when dividends are automatically used to buy more shares instead of being paid out as cash. You enter your starting investment, contributions, dividend yield, share price growth, and dividend growth, and the calculator shows your future portfolio value, share count, and dividend income year by year." } },
+    { "@type": "Question", "name": "How does DRIP compounding actually work?", "acceptedAnswer": { "@type": "Answer", "text": "DRIP compounding has three engines running at once: reinvested dividends buy more shares, the dividend per share grows over time, and the share price appreciates. Your annual income equals shares times dividend per share, so it benefits from two compounding forces simultaneously." } },
+    { "@type": "Question", "name": "What is yield on cost, and why does it matter?", "acceptedAnswer": { "@type": "Answer", "text": "Yield on cost is your annual dividend income divided by your original investment. If you invested $10,000 and now collect $1,200 a year in dividends, your yield on cost is 12% — even if new buyers only get 3%. With steady dividend growth it roughly doubles every 12 years." } },
+    { "@type": "Question", "name": "Is DRIP better than taking cash dividends?", "acceptedAnswer": { "@type": "Answer", "text": "For long-term wealth building, usually yes — reinvested dividends buy shares that appreciate and pay future dividends, while spent cash earns nothing. Over a 30-year horizon the DRIP investor typically ends up far ahead. Retirees living off portfolio income should take the cash." } },
+    { "@type": "Question", "name": "What happens to my DRIP if a company cuts its dividend?", "acceptedAnswer": { "@type": "Answer", "text": "A cut reduces income and slows the snowball, but the damage is often temporary: with dividend growth resuming from the lower base, income typically recovers within a few years, especially early in a long plan when contributions keep adding shares." } },
+    { "@type": "Question", "name": "Are dividends from a DRIP taxable?", "acceptedAnswer": { "@type": "Answer", "text": "In most countries, yes — dividends are generally taxable in the year they are paid even when automatically reinvested, unless the investment sits in a tax-advantaged retirement account. Treat projections as pre-tax and consult a qualified tax professional." } }
+  ]
+}
+</script>
+
+<footer class="border-t mt-4" style="border-color:rgba(212,175,55,.25);background:rgba(8,23,15,.9)">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-2">
+      <span class="font-display text-xl font-bold gold-text">SnowYield</span>
+      <span class="text-xs" style="color:#8f8668">— free dividend tools, forever.</span>
+    </div>
+    <p class="text-xs text-center sm:text-right max-w-md" style="color:#8f8668">Educational projections only — not financial advice. Past performance does not guarantee future results.</p>
+  </div>
+</footer>
+
+<!-- PURE LOGIC LIB (inlined at build time) -->
+<script id="snowyield-dividend-drip-calculator-lib">
+/* SnowYield - Dividend DRIP Snowball Calculator: core math (PURE, DOM-free).
+ * Models yearly compounding with dividend yield, DRIP reinvestment at an
+ * assumed share-price growth rate, yield-on-cost, dividend-cut stress tests
+ * and multi-scenario comparison. All functions are top-level declarations;
+ * no IIFE/modules/exports; no browser globals are touched in this file.
+ */
+
+const SNOWYIELD_INITIAL_SHARE_PRICE = 100;
+
+function snowNum(v, fallback) {
+  var n = (typeof v === 'number') ? v : parseFloat(v);
+  if (typeof n !== 'number' || isNaN(n) || !isFinite(n)) return fallback;
+  return n;
+}
+
+function snowCleanParams(p) {
+  p = p || {};
+  return {
+    initialInvestment: Math.max(0, snowNum(p.initialInvestment, 10000)),
+    annualContribution: Math.max(0, snowNum(p.annualContribution, 5000)),
+    dividendYield: Math.max(0, snowNum(p.dividendYield, 4)),
+    sharePriceGrowth: Math.max(-50, snowNum(p.sharePriceGrowth, 7)),
+    dividendGrowth: Math.max(-50, snowNum(p.dividendGrowth, 6)),
+    years: Math.max(0, Math.min(50, Math.floor(snowNum(p.years, 30))))
+  };
+}
+
+/* Internal projector. Contributions are invested at the start of each year;
+ * dividends are computed on the post-contribution share count and (for DRIP)
+ * reinvested at the end-of-year share price. A dividend cut multiplies the
+ * dividend-per-share for every year >= cutYear. */
+function snowProject(p, reinvest, cutPct, cutYear) {
+  var P0 = SNOWYIELD_INITIAL_SHARE_PRICE;
+  var y0 = p.dividendYield / 100;
+  var g = p.sharePriceGrowth / 100;
+  var d = p.dividendGrowth / 100;
+  var shares = p.initialInvestment / P0;
+  var cumDiv = 0;
+  var cumCash = 0;
+  var rows = [];
+  for (var yr = 1; yr <= p.years; yr++) {
+    var priceStart = P0 * Math.pow(1 + g, yr - 1);
+    var priceEnd = priceStart * (1 + g);
+    var newShares = p.annualContribution / priceStart;
+    shares = shares + newShares;
+    var divPerShare = y0 * P0 * Math.pow(1 + d, yr - 1);
+    if (cutPct > 0 && yr >= cutYear) {
+      divPerShare = divPerShare * (1 - cutPct / 100);
+    }
+    var dividends = shares * divPerShare;
+    cumDiv += dividends;
+    var cashThisYear = 0;
+    if (reinvest) {
+      shares = shares + dividends / priceEnd;
+    } else {
+      cashThisYear = dividends;
+      cumCash += dividends;
+    }
+    var value = shares * priceEnd;
+    rows.push({
+      year: yr,
+      priceStart: priceStart,
+      priceEnd: priceEnd,
+      shares: shares,
+      contribution: p.annualContribution,
+      dividendPerShare: divPerShare,
+      annualDividends: dividends,
+      cumulativeDividends: cumDiv,
+      cashReceivedThisYear: cashThisYear,
+      cumulativeCashReceived: cumCash,
+      portfolioValue: value,
+      yieldOnCost: p.initialInvestment > 0 ? (dividends / p.initialInvestment) * 100 : 0,
+      totalInvested: p.initialInvestment + p.annualContribution * yr
+    });
+  }
+  return rows;
+}
+
+/* Year-by-year DRIP projection. params: { initialInvestment, annualContribution,
+ * dividendYield (%), sharePriceGrowth (%), dividendGrowth (%), years } */
+function projectDrip(params) {
+  return snowProject(snowCleanParams(params), true, 0, 0);
+}
+
+/* Year-by-year cash-payout projection (dividends paid out, never reinvested). */
+function projectCash(params) {
+  return snowProject(snowCleanParams(params), false, 0, 0);
+}
+
+/* Effective yield on the ORIGINAL investment each year, from DRIP rows. */
+function yieldOnCost(rows) {
+  return (rows || []).map(function (r) {
+    return { year: r.year, yieldOnCost: r.yieldOnCost, annualDividends: r.annualDividends };
+  });
+}
+
+/* Dividend-cut stress test on the DRIP path. Returns cut rows, baseline rows,
+ * the income target (year before the cut), the year income recovers to that
+ * target (or -1 if it never recovers within the horizon), and total income lost. */
+function stressTestDrip(params, cutPct, cutYear) {
+  var p = snowCleanParams(params);
+  cutPct = Math.max(0, Math.min(100, snowNum(cutPct, 50)));
+  cutYear = Math.max(1, Math.min(Math.max(1, p.years), Math.floor(snowNum(cutYear, 5))));
+  var baseRows = snowProject(p, true, 0, 0);
+  var cutRows = snowProject(p, true, cutPct, cutYear);
+  var target;
+  if (baseRows.length === 0) {
+    target = 0;
+  } else if (cutYear > 1) {
+    target = baseRows[cutYear - 2].annualDividends;
+  } else {
+    target = baseRows[0].annualDividends * (1 - cutPct / 100);
+  }
+  var recoveryYear = -1;
+  for (var i = cutYear - 1; i < cutRows.length; i++) {
+    if (cutRows[i].annualDividends >= target) { recoveryYear = i + 1; break; }
+  }
+  var lost = 0;
+  for (var j = 0; j < baseRows.length; j++) {
+    lost += baseRows[j].annualDividends - cutRows[j].annualDividends;
+  }
+  return {
+    rows: cutRows,
+    baseRows: baseRows,
+    cutPct: cutPct,
+    cutYear: cutYear,
+    baselineIncome: target,
+    recoveryYear: recoveryYear,
+    yearsToRecover: recoveryYear > 0 ? recoveryYear - cutYear : -1,
+    totalIncomeLost: lost
+  };
+}
+
+/* Side-by-side comparison of N named DRIP scenarios over the same horizon.
+ * scenarios: [{ name, params }]. Returns per-scenario rows + headline numbers. */
+function compareScenarios(scenarios, years) {
+  years = Math.max(0, Math.min(50, Math.floor(snowNum(years, 30))));
+  return (scenarios || []).map(function (s) {
+    var merged = {};
+    if (s && s.params) {
+      for (var k in s.params) { merged[k] = s.params[k]; }
+    }
+    merged.years = years;
+    var params = snowCleanParams(merged);
+    var rows = snowProject(params, true, 0, 0);
+    var last = rows.length > 0 ? rows[rows.length - 1] : null;
+    return {
+      name: String((s && s.name) || 'Scenario'),
+      params: params,
+      rows: rows,
+      finalValue: last ? last.portfolioValue : params.initialInvestment,
+      finalIncome: last ? last.annualDividends : 0,
+      finalYieldOnCost: last ? last.yieldOnCost : 0,
+      totalInvested: last ? last.totalInvested : params.initialInvestment
+    };
+  });
+}
+
+/* Built-in scenario presets shown in the UI. */
+function snowPresets() {
+  return [
+    { name: 'Conservative', dividendYield: 3, sharePriceGrowth: 5, dividendGrowth: 4 },
+    { name: 'Base', dividendYield: 4, sharePriceGrowth: 7, dividendGrowth: 6 },
+    { name: 'Aggressive', dividendYield: 5, sharePriceGrowth: 9, dividendGrowth: 8 }
+  ];
+}
+
+/* Pure formatting helpers. */
+function fmtMoney(v) {
+  if (!isFinite(v)) return '$0';
+  var n = Math.round(v);
+  var sign = n < 0 ? '-' : '';
+  var s = String(Math.abs(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return sign + '$' + s;
+}
+
+function fmtNum(v, digits) {
+  if (!isFinite(v)) return '0';
+  return Number(v).toFixed(digits == null ? 2 : digits);
+}
+
+</script>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* ---------- input handling ---------- */
+  function readParams() {
+    return {
+      initialInvestment: parseFloat($('in-initial').value),
+      annualContribution: parseFloat($('in-contrib').value),
+      dividendYield: parseFloat($('in-yield').value),
+      sharePriceGrowth: parseFloat($('in-growth').value),
+      dividendGrowth: parseFloat($('in-divgrowth').value),
+      years: parseInt($('in-years').value, 10)
+    };
+  }
+  function showError(msg) {
+    var el = $('input-error');
+    if (!msg) { el.classList.add('hidden'); el.textContent = ''; return; }
+    el.textContent = msg; el.classList.remove('hidden');
+  }
+  function validate(p) {
+    var fields = ['initialInvestment', 'annualContribution', 'dividendYield', 'sharePriceGrowth', 'dividendGrowth'];
+    for (var i = 0; i < fields.length; i++) {
+      var v = p[fields[i]];
+      if (typeof v !== 'number' || isNaN(v)) return 'Please enter a valid number for every field.';
+    }
+    if (p.initialInvestment < 0 || p.annualContribution < 0) return 'Investment and contribution cannot be negative.';
+    if (p.initialInvestment === 0 && p.annualContribution === 0) return 'Enter an initial investment or an annual contribution to grow a snowball.';
+    if (p.dividendYield < 0 || p.dividendYield > 30) return 'Dividend yield should be between 0% and 30%.';
+    return null;
+  }
+
+  /* ---------- canvas chart helpers ---------- */
+  function setupCanvas(cv) {
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    var w = cv.clientWidth || 600, h = cv.clientHeight || 300;
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h };
+  }
+  function niceMax(v) {
+    if (!(v > 0)) return 1;
+    var p = Math.pow(10, Math.floor(Math.log10(v)));
+    var n = v / p;
+    var m = n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10;
+    return m * p;
+  }
+  function drawLineChart(cv, series, opts) {
+    opts = opts || {};
+    var s = setupCanvas(cv), ctx = s.ctx, W = s.w, H = s.h;
+    var padL = 62, padR = 14, padT = 14, padB = 30;
+    var iw = W - padL - padR, ih = H - padT - padB;
+    var n = 0, maxV = 0;
+    series.forEach(function (sr) {
+      n = Math.max(n, sr.values.length);
+      sr.values.forEach(function (v) { if (v > maxV) maxV = v; });
+    });
+    if (n === 0) return;
+    var yMax = niceMax(maxV * 1.05);
+    var upto = opts.progress == null ? 1 : Math.max(0, Math.min(1, opts.progress));
+    var count = Math.max(2, Math.round(n * upto));
+    ctx.clearRect(0, 0, W, H);
+    ctx.font = '11px Inter, sans-serif';
+    // gridlines + y labels
+    for (var gI = 0; gI <= 4; gI++) {
+      var gv = yMax * gI / 4;
+      var gy = padT + ih - (ih * gI / 4);
+      ctx.strokeStyle = 'rgba(212,175,55,.12)';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(padL, gy); ctx.lineTo(W - padR, gy); ctx.stroke();
+      ctx.fillStyle = '#8f8668';
+      ctx.textAlign = 'right';
+      ctx.fillText(opts.yFmt ? opts.yFmt(gv) : fmtMoney(gv), padL - 8, gy + 4);
+    }
+    // x labels
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#8f8668';
+    var step = Math.max(1, Math.ceil(n / 6));
+    for (var xi = 0; xi < n; xi += step) {
+      var xx = padL + (n === 1 ? 0 : iw * xi / (n - 1));
+      ctx.fillText('Y' + (xi + 1), xx, H - 10);
+    }
+    // series
+    series.forEach(function (sr) {
+      var vals = sr.values.slice(0, count);
+      if (vals.length < 1) return;
+      var X = function (i) { return padL + (n === 1 ? 0 : iw * i / (n - 1)); };
+      var Y = function (v) { return padT + ih - (ih * v / yMax); };
+      if (sr.fill) {
+        var grad = ctx.createLinearGradient(0, padT, 0, padT + ih);
+        grad.addColorStop(0, sr.fillA); grad.addColorStop(1, sr.fillB);
+        ctx.beginPath();
+        ctx.moveTo(X(0), Y(vals[0]));
+        for (var i = 1; i < vals.length; i++) ctx.lineTo(X(i), Y(vals[i]));
+        ctx.lineTo(X(vals.length - 1), padT + ih);
+        ctx.lineTo(X(0), padT + ih);
+        ctx.closePath(); ctx.fillStyle = grad; ctx.fill();
+      }
+      ctx.beginPath();
+      ctx.moveTo(X(0), Y(vals[0]));
+      for (var j = 1; j < vals.length; j++) ctx.lineTo(X(j), Y(vals[j]));
+      ctx.strokeStyle = sr.color; ctx.lineWidth = 2.5;
+      ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      ctx.shadowColor = sr.color; ctx.shadowBlur = 8;
+      ctx.stroke(); ctx.shadowBlur = 0;
+      // endpoint dot
+      var lx = X(vals.length - 1), ly = Y(vals[vals.length - 1]);
+      ctx.beginPath(); ctx.arc(lx, ly, 4, 0, Math.PI * 2);
+      ctx.fillStyle = sr.color; ctx.fill();
+      ctx.beginPath(); ctx.arc(lx, ly, 7, 0, Math.PI * 2);
+      ctx.strokeStyle = sr.color; ctx.globalAlpha = 0.4; ctx.stroke(); ctx.globalAlpha = 1;
+    });
+    // progress cursor
+    if (upto < 1 && count > 1) {
+      var cx = padL + iw * (count - 1) / (n - 1);
+      ctx.strokeStyle = 'rgba(243,239,227,.5)'; ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(cx, padT); ctx.lineTo(cx, padT + ih); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+
+  /* ---------- state ---------- */
+  var lastDrip = [], lastCash = [], lastParams = null, ledgerFull = false;
+
+  /* ---------- main calculation ---------- */
+  function calculate() {
+    var p = readParams();
+    var err = validate(p);
+    if (err) { showError(err); return; }
+    showError(null);
+    lastParams = p;
+    lastDrip = projectDrip(p);
+    lastCash = projectCash(p);
+    var d = lastDrip[lastDrip.length - 1], c = lastCash[lastCash.length - 1];
+    $('stat-drip').textContent = fmtMoney(d.portfolioValue);
+    var cashTotal = c.portfolioValue + c.cumulativeCashReceived;
+    $('stat-cash').textContent = fmtMoney(cashTotal);
+    var edge = d.portfolioValue - cashTotal;
+    $('stat-edge').textContent = (edge >= 0 ? '+' : '−') + fmtMoney(Math.abs(edge)).slice(0);
+    var edgePct = cashTotal > 0 ? (edge / cashTotal * 100) : 0;
+    $('stat-edge-pct').textContent = (edgePct >= 0 ? '+' : '−') + fmtNum(Math.abs(edgePct), 1) + '% vs cash';
+    $('stat-yoc').textContent = fmtNum(d.yieldOnCost, 2) + '%';
+
+    // race chart (static full)
+    drawLineChart($('chart-race'), [
+      { color: '#D4AF37', values: lastDrip.map(function (r) { return r.portfolioValue; }) },
+      { color: '#34D399', values: lastCash.map(function (r) { return r.portfolioValue + r.cumulativeCashReceived; }) }
+    ], {});
+    $('race-note').textContent = 'After ' + p.years + ' years, reinvesting every dividend leaves you with ' +
+      fmtMoney(d.portfolioValue) + ' versus ' + fmtMoney(cashTotal) + ' for the cash-taker — a ' +
+      fmtMoney(Math.abs(edge)) + ' reward for patience. The gap is small early and explosive late: that is compounding.';
+
+    // yield on cost
+    var yoc = yieldOnCost(lastDrip);
+    drawLineChart($('chart-yoc'), [
+      { color: '#D4AF37', fill: true, fillA: 'rgba(212,175,55,.35)', fillB: 'rgba(212,175,55,0)', values: yoc.map(function (r) { return r.yieldOnCost; }) }
+    ], { yFmt: function (v) { return fmtNum(v, 1) + '%'; } });
+    $('yoc-note').textContent = 'You started at a ' + fmtNum(p.dividendYield, 2) + '% yield. By year ' + p.years +
+      ', every original dollar earns ' + fmtNum(d.yieldOnCost, 2) + '% a year — that is $' +
+      fmtMoney(d.annualDividends).slice(1) + ' of annual income on your first $' +
+      fmtMoney(p.initialInvestment).slice(1) + ' invested.';
+
+    renderLedger();
+    runStress(false);
+    compareScenariosUI();
+  }
+
+  /* ---------- race animation ---------- */
+  var raceAnim = null;
+  function playRace() {
+    if (raceAnim) cancelAnimationFrame(raceAnim);
+    var btn = $('btn-race');
+    btn.disabled = true; btn.style.opacity = '0.6'; btn.textContent = 'Racing…';
+    var t0 = null, DUR = 4500;
+    function frame(t) {
+      if (!t0) t0 = t;
+      var prog = Math.min(1, (t - t0) / DUR);
+      drawLineChart($('chart-race'), [
+        { color: '#D4AF37', values: lastDrip.map(function (r) { return r.portfolioValue; }) },
+        { color: '#34D399', values: lastCash.map(function (r) { return r.portfolioValue + r.cumulativeCashReceived; }) }
+      ], { progress: prog });
+      if (prog < 1) { raceAnim = requestAnimationFrame(frame); }
+      else { raceAnim = null; btn.disabled = false; btn.style.opacity = '1'; btn.textContent = '▶ Play Race'; }
+    }
+    raceAnim = requestAnimationFrame(frame);
+  }
+
+  /* ---------- stress test ---------- */
+  function runStress(announce) {
+    if (!lastParams) return;
+    var cutPct = parseFloat($('st-cut').value), cutYear = parseInt($('st-year').value, 10);
+    if (isNaN(cutPct) || cutPct < 0 || cutPct > 100) cutPct = 50;
+    if (isNaN(cutYear) || cutYear < 1) cutYear = 1;
+    if (cutYear > lastParams.years) cutYear = lastParams.years;
+    var res = stressTestDrip(lastParams, cutPct, cutYear);
+    drawLineChart($('chart-stress'), [
+      { color: '#34D399', values: res.baseRows.map(function (r) { return r.annualDividends; }) },
+      { color: '#F87171', values: res.rows.map(function (r) { return r.annualDividends; }) }
+    ], {});
+    $('stress-lost').textContent = fmtMoney(res.totalIncomeLost);
+    $('stress-recover').textContent = res.recoveryYear > 0
+      ? (res.yearsToRecover === 0 ? 'Same year' : res.yearsToRecover + ' yrs (yr ' + res.recoveryYear + ')')
+      : 'Not within horizon';
+    var afterIdx = Math.min(cutYear, res.rows.length - 1);
+    $('stress-after').textContent = fmtMoney(res.rows[afterIdx].annualDividends);
+    var note = 'A ' + res.cutPct + '% cut in year ' + res.cutYear + ' costs ' + fmtMoney(res.totalIncomeLost) +
+      ' of lifetime dividend income versus the no-cut path. ';
+    note += res.recoveryYear > 0
+      ? 'Your annual income climbs back to its pre-cut level by year ' + res.recoveryYear + ', thanks to dividend growth resuming from the lower base.'
+      : 'Income never fully recovers within ' + lastParams.years + ' years — a reminder to favor dividend growers with strong balance sheets.';
+    $('stress-note').textContent = note;
+    if (announce) {
+      var tb = document.querySelector('[data-tab="stress"]');
+      if (tb && !tb.classList.contains('active')) tb.click();
+    }
+  }
+
+  /* ---------- scenarios ---------- */
+  var SCEN_COLORS = ['#D4AF37', '#34D399', '#60A5FA'];
+  function scenInputs() {
+    var arr = [];
+    for (var i = 0; i < 3; i++) {
+      arr.push({
+        name: $('sc-name-' + i).value || ('Scenario ' + (i + 1)),
+        dividendYield: parseFloat($('sc-yield-' + i).value) || 0,
+        sharePriceGrowth: parseFloat($('sc-growth-' + i).value) || 0,
+        dividendGrowth: parseFloat($('sc-div-' + i).value) || 0
+      });
+    }
+    return arr;
+  }
+  function buildScenarioEditors(presets) {
+    var wrap = $('scen-editors');
+    wrap.innerHTML = '';
+    presets.forEach(function (pr, i) {
+      var div = document.createElement('div');
+      div.className = 'rounded-xl p-4';
+      div.style.cssText = 'background:#08170F;border:1px solid ' + SCEN_COLORS[i] + '55';
+      div.innerHTML =
+        '<label class="lbl" for="sc-name-' + i + '">Scenario ' + (i + 1) + ' name</label>' +
+        '<input id="sc-name-' + i + '" class="field mt-1 mb-3" type="text" value="' + pr.name.replace(/"/g, '&quot;') + '">' +
+        '<label class="lbl" for="sc-yield-' + i + '">Dividend yield %</label>' +
+        '<input id="sc-yield-' + i + '" class="field mt-1 mb-3" type="number" step="0.5" value="' + pr.dividendYield + '">' +
+        '<label class="lbl" for="sc-growth-' + i + '">Price growth %/yr</label>' +
+        '<input id="sc-growth-' + i + '" class="field mt-1 mb-3" type="number" step="0.5" value="' + pr.sharePriceGrowth + '">' +
+        '<label class="lbl" for="sc-div-' + i + '">Dividend growth %/yr</label>' +
+        '<input id="sc-div-' + i + '" class="field mt-1" type="number" step="0.5" value="' + pr.dividendGrowth + '">';
+      wrap.appendChild(div);
+    });
+  }
+  function compareScenariosUI() {
+    if (!lastParams) return;
+    var inputs = scenInputs();
+    var scenarios = inputs.map(function (s) {
+      return {
+        name: s.name,
+        params: {
+          initialInvestment: lastParams.initialInvestment,
+          annualContribution: lastParams.annualContribution,
+          dividendYield: s.dividendYield,
+          sharePriceGrowth: s.sharePriceGrowth,
+          dividendGrowth: s.dividendGrowth
+        }
+      };
+    });
+    var results = compareScenarios(scenarios, lastParams.years);
+    drawLineChart($('chart-scen'), results.map(function (r, i) {
+      return { color: SCEN_COLORS[i % 3], values: r.rows.map(function (row) { return row.portfolioValue; }) };
+    }), {});
+    var tb = $('scen-tbody');
+    tb.innerHTML = '';
+    results.forEach(function (r, i) {
+      var tr = document.createElement('tr');
+      tr.style.borderTop = '1px solid rgba(212,175,55,.15)';
+      tr.innerHTML =
+        '<td class="py-2.5 pr-4 font-bold"><span class="inline-block w-2.5 h-2.5 rounded-full mr-2" style="background:' + SCEN_COLORS[i % 3] + '"></span>' +
+        r.name.replace(/</g, '&lt;') + '</td>' +
+        '<td class="py-2.5 pr-4 text-right font-semibold" style="color:#E8C84A">' + fmtMoney(r.finalValue) + '</td>' +
+        '<td class="py-2.5 pr-4 text-right">' + fmtMoney(r.finalIncome) + '/yr</td>' +
+        '<td class="py-2.5 text-right">' + fmtNum(r.finalYieldOnCost, 2) + '%</td>';
+      tb.appendChild(tr);
+    });
+  }
+  function savePresets() {
+    try {
+      localStorage.setItem('snowyield-presets-v1', JSON.stringify(scenInputs()));
+      $('scen-msg').textContent = 'Presets saved in this browser.';
+    } catch (e) { $('scen-msg').textContent = 'Could not save presets in this browser.'; }
+  }
+  function loadPresets() {
+    try {
+      var raw = localStorage.getItem('snowyield-presets-v1');
+      if (!raw) { $('scen-msg').textContent = 'No saved presets yet — tweak the scenarios and hit Save Presets.'; return; }
+      var arr = JSON.parse(raw);
+      buildScenarioEditors(arr.slice(0, 3).map(function (s, i) {
+        return { name: s.name || ('Scenario ' + (i + 1)), dividendYield: s.dividendYield || 0, sharePriceGrowth: s.sharePriceGrowth || 0, dividendGrowth: s.dividendGrowth || 0 };
+      }));
+      $('scen-msg').textContent = 'Saved presets loaded.';
+      compareScenariosUI();
+    } catch (e) { $('scen-msg').textContent = 'Could not load presets in this browser.'; }
+  }
+
+  /* ---------- ledger ---------- */
+  function coinStack(value, maxVal, mint) {
+    var n = Math.max(1, Math.min(14, Math.round(14 * value / maxVal)));
+    var s = '<span class="coin-stack" aria-hidden="true">';
+    for (var i = 0; i < n; i++) s += '<span class="coin' + (mint ? ' mint' : '') + '"></span>';
+    return s + '</span>';
+  }
+  function renderLedger() {
+    var tb = $('ledger-tbody');
+    tb.innerHTML = '';
+    var rows = ledgerFull ? lastDrip : lastDrip.slice(0, 10);
+    var maxV = lastDrip.length ? lastDrip[lastDrip.length - 1].portfolioValue : 1;
+    rows.forEach(function (r, idx) {
+      var c = lastCash[idx];
+      var tr = document.createElement('tr');
+      tr.style.borderTop = '1px solid rgba(212,175,55,.12)';
+      tr.innerHTML =
+        '<td class="py-2 pr-3 font-bold" style="color:#E8C84A">' + r.year + '</td>' +
+        '<td class="py-2 pr-3 text-right">' + fmtMoney(r.priceEnd) + '</td>' +
+        '<td class="py-2 pr-3 text-right">' + fmtNum(r.shares, 1) + '</td>' +
+        '<td class="py-2 pr-3 text-right" style="color:#6EE7B7">' + fmtMoney(r.annualDividends) + '</td>' +
+        '<td class="py-2 pr-3 text-right font-semibold" style="color:#E8C84A">' + fmtMoney(r.portfolioValue) + '</td>' +
+        '<td class="py-2 pr-3 text-right">' + fmtMoney(c.portfolioValue + c.cumulativeCashReceived) + '</td>' +
+        '<td class="py-2">' + coinStack(r.portfolioValue, maxV, false) + '</td>';
+      tb.appendChild(tr);
+    });
+    $('btn-ledger').textContent = ledgerFull ? 'Show first 10 years' : 'Show full table (' + lastDrip.length + ' yrs)';
+  }
+
+  /* ---------- CSV + copy ---------- */
+  function downloadCSV() {
+    if (!lastDrip.length) return;
+    var head = 'Year,Share Price,Shares,Annual Dividends,Cumulative Dividends,DRIP Value,Cash Portfolio Value,Cash Received (cumulative),Yield on Cost %';
+    var lines = [head];
+    lastDrip.forEach(function (r, i) {
+      var c = lastCash[i];
+      lines.push([r.year, r.priceEnd.toFixed(2), r.shares.toFixed(2), r.annualDividends.toFixed(2),
+        r.cumulativeDividends.toFixed(2), r.portfolioValue.toFixed(2), c.portfolioValue.toFixed(2),
+        c.cumulativeCashReceived.toFixed(2), r.yieldOnCost.toFixed(2)].join(','));
+    });
+    var blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'snowyield-drip-projection.csv';
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 500);
+  }
+  function copySummary() {
+    if (!lastDrip.length) return;
+    var d = lastDrip[lastDrip.length - 1], c = lastCash[lastCash.length - 1];
+    var txt = 'SnowYield DRIP projection (' + lastParams.years + ' yrs): DRIP value ' + fmtMoney(d.portfolioValue) +
+      ' vs cash-payout ' + fmtMoney(c.portfolioValue + c.cumulativeCashReceived) +
+      '. Final annual dividends ' + fmtMoney(d.annualDividends) + ' (' + fmtNum(d.yieldOnCost, 2) + '% yield on cost).';
+    function done(ok) {
+      var b = $('btn-copy');
+      b.textContent = ok ? 'Copied!' : 'Copy failed';
+      setTimeout(function () { b.textContent = 'Copy Summary'; }, 1600);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).then(function () { done(true); }, function () { done(false); });
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = txt; document.body.appendChild(ta); ta.select();
+      try { done(document.execCommand('copy')); } catch (e) { done(false); }
+      document.body.removeChild(ta);
+    }
+  }
+
+  /* ---------- tabs ---------- */
+  function initTabs() {
+    var btns = document.querySelectorAll('.tab-btn');
+    btns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        btns.forEach(function (x) { x.classList.remove('active'); });
+        b.classList.add('active');
+        ['race', 'yoc', 'stress', 'scen'].forEach(function (t) {
+          $('tab-' + t).classList.toggle('hidden', t !== b.getAttribute('data-tab'));
+        });
+        // redraw the now-visible chart (canvas needs layout size)
+        if (lastParams) {
+          if (b.getAttribute('data-tab') === 'race') calculate._race && null;
+          calculate();
+        }
+      });
+    });
+  }
+
+  /* ---------- wire up ---------- */
+  function init() {
+    buildScenarioEditors(snowPresets());
+    initTabs();
+    ['in-initial', 'in-contrib', 'in-yield', 'in-growth', 'in-divgrowth'].forEach(function (id) {
+      $(id).addEventListener('input', calculate);
+    });
+    $('in-years').addEventListener('input', function () {
+      $('years-label').textContent = $('in-years').value + ' years';
+      calculate();
+    });
+    $('btn-calc').addEventListener('click', calculate);
+    $('btn-race').addEventListener('click', playRace);
+    $('btn-stress').addEventListener('click', function () { runStress(true); });
+    $('st-cut').addEventListener('input', function () { runStress(false); });
+    $('st-year').addEventListener('input', function () { runStress(false); });
+    $('btn-compare').addEventListener('click', compareScenariosUI);
+    $('btn-save-presets').addEventListener('click', savePresets);
+    $('btn-load-presets').addEventListener('click', loadPresets);
+    $('btn-ledger').addEventListener('click', function () { ledgerFull = !ledgerFull; renderLedger(); });
+    $('btn-csv').addEventListener('click', downloadCSV);
+    $('btn-copy').addEventListener('click', copySummary);
+    window.addEventListener('resize', function () { if (lastParams) calculate(); });
+    calculate();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+</body>
+</html>
